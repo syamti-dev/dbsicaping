@@ -571,7 +571,7 @@ CREATE TABLE payment_methods (
 
 CREATE TABLE profiles (
   id INTEGER AUTO_INCREMENT NOT NULL,
-  name VARCHAR(150) NOT NULL,
+  name VARCHAR(150) NOT NULL UNIQUE,
   description VARCHAR(200) NOT NULL,
   fdl BOOL NOT NULL,
   cbu INTEGER NOT NULL,
@@ -773,6 +773,56 @@ CREATE TABLE user_profiles (
   uat TIMESTAMP NOT NULL,
   CONSTRAINT PK_user_profiles PRIMARY KEY (id)
 );
+
+
+/* User permissions */
+CREATE TABLE menu_systems (
+  id INTEGER AUTO_INCREMENT NOT NULL,
+  name VARCHAR(150) NOT NULL,
+  description VARCHAR(200) NOT NULL,
+  order_view INTEGER NOT NULL,
+  fdl BOOL NOT NULL,
+  cbu INTEGER NOT NULL,
+  cat TIMESTAMP NOT NULL,
+  luu INTEGER NOT NULL,
+  uat TIMESTAMP NOT NULL,
+  CONSTRAINT PK_menu_systems PRIMARY KEY (id)
+);
+
+CREATE TABLE menu_items (
+  id INTEGER AUTO_INCREMENT NOT NULL,
+  id_system INTEGER NOT NULL,
+  name VARCHAR(150) NOT NULL,
+  description VARCHAR(200) NOT NULL,
+  url VARCHAR(30) not null default '/',
+  order_view INTEGER NOT NULL,
+  fa_icon VARCHAR(30),
+  id_item_parent INTEGER,
+  fdl BOOL NOT NULL,
+  cbu INTEGER NOT NULL,
+  cat TIMESTAMP NOT NULL,
+  luu INTEGER NOT NULL,
+  uat TIMESTAMP NOT NULL,
+  CONSTRAINT PK_menu_items PRIMARY KEY (id),
+  CONSTRAINT FK_menu_systems FOREIGN KEY (id_system) REFERENCES menu_systems(id),
+  CONSTRAINT FK_menu_items FOREIGN KEY (id_item_parent) REFERENCES menu_items(id)
+);
+
+CREATE TABLE profile_permissions (
+  id INTEGER AUTO_INCREMENT NOT NULL,
+  id_profile INTEGER NOT NULL,
+  id_menu_item INTEGER not null,
+  fdl BOOL NOT NULL,
+  cbu INTEGER NOT NULL,
+  cat TIMESTAMP NOT NULL,
+  luu INTEGER NOT NULL,
+  uat TIMESTAMP NOT NULL,
+  CONSTRAINT PK_profile_permissions PRIMARY KEY (id),
+  CONSTRAINT FK_profile_permissions_profiles FOREIGN KEY (id_profile) REFERENCES profiles(id),
+  CONSTRAINT FK_profile_permissions_menu_items FOREIGN KEY (id_menu_item) REFERENCES menu_items(id)
+);
+
+
 
 /*================================================================================*/
 /* CREATE FOREIGN KEYS                                                            */
